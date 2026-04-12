@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DayDream Lotto — Dream It. Decode It. Play It.</title>
+<meta name="description" content="Turn your dreams into lottery numbers. Describe what you dreamed and DayDream Lotto reveals your destiny sequence.">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#c9a84c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DayDream Lotto">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#06040f;--card:#130f22;--card2:#1a1530;
+  --rim:#2c2250;--rim2:#3a2e68;
+  --gold:#c9a84c;--gold2:#e8c96b;--gold3:#fff0b8;
+  --silver:#9ba8c2;--glow:#a78bfa;--teal:#2dd4bf;
+  --pro:#f59e0b;--pro2:#fcd34d;--green:#34d399;--red:#f87171;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--ink);color:#e2d9f3;font-family:'Cormorant Garamond',serif;min-height:100vh;overflow-x:hidden;}
+#canvas-bg{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.app{position:relative;z-index:1;max-width:700px;margin:0 auto;padding:0 18px 100px;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 0 0;margin-bottom:28px;animation:fadeDown .7s ease both;}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand-name{font-family:'Cinzel Decorative',serif;font-size:.95rem;background:linear-gradient(120deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.topbar-right{display:flex;align-items:center;gap:8px;}
+.tier-pill{font-size:.65rem;font-family:'Cinzel Decorative',serif;letter-spacing:.12em;padding:4px 10px;border-radius:20px;border:1px solid var(--rim2);color:var(--silver);}
+.tier-pill.is-pro{border-color:var(--pro);color:var(--pro2);background:rgba(245,158,11,.08);}
+.upgrade-top{font-size:.65rem;font-family:'Cinzel Decorative',serif;letter-spacing:.1em;padding:5px 12px;border-radius:20px;border:1px solid var(--gold);background:linear-gradient(135deg,rgba(201,168,76,.2),rgba(201,168,76,.05));color:var(--gold2);cursor:pointer;transition:all .2s;}
+.upgrade-top:hover{background:linear-gradient(135deg,rgba(201,168,76,.35),rgba(201,168,76,.12));}
+.hero{text-align:center;margin-bottom:28px;animation:fadeDown .8s ease .05s both;}
+.hero-eye{width:70px;height:70px;margin:0 auto 14px;animation:pulseEye 4s ease-in-out infinite;}
+@keyframes pulseEye{0%,100%{filter:drop-shadow(0 0 8px rgba(167,139,250,.3));}50%{filter:drop-shadow(0 0 24px rgba(167,139,250,.75));}}
+h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1.4rem,6vw,2.4rem);font-weight:900;background:linear-gradient(135deg,var(--gold) 0%,var(--gold2) 35%,var(--gold3) 55%,var(--gold) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:.04em;line-height:1.15;}
+.tagline{font-size:1rem;font-style:italic;font-weight:300;color:var(--silver);margin-top:8px;letter-spacing:.05em;}
+.tagline em{color:var(--glow);font-style:normal;}
+.align-bar{background:var(--card);border:1px solid var(--rim);border-radius:16px;padding:14px 18px;margin-bottom:18px;display:flex;align-items:center;gap:14px;animation:fadeUp .5s ease both;}
+.align-ring-wrap{position:relative;width:50px;height:50px;flex-shrink:0;}
+.align-ring{transform:rotate(-90deg);}
+.align-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel Decorative',serif;font-size:.76rem;font-weight:700;}
+.align-info .at{font-family:'Cinzel Decorative',serif;font-size:.58rem;letter-spacing:.15em;color:var(--gold);text-transform:uppercase;margin-bottom:3px;}
+.align-info .ad{font-size:.8rem;font-style:italic;color:#c4b5d8;line-height:1.4;}
+.align-info .ap{font-size:.66rem;color:var(--silver);opacity:.55;margin-top:2px;}
+.sig-card{background:linear-gradient(135deg,rgba(91,33,182,.1),rgba(55,48,163,.07));border:1px solid rgba(91,33,182,.3);border-radius:16px;padding:16px 20px;margin-bottom:18px;display:none;animation:fadeUp .5s ease both;}
+.sig-card.show{display:block;}
+.sig-title{font-family:'Cinzel Decorative',serif;font-size:.58rem;letter-spacing:.15em;color:var(--glow);text-transform:uppercase;margin-bottom:12px;}
+.sig-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px;}
+.sig-item{text-align:center;}
+.si-lbl{font-size:.58rem;letter-spacing:.1em;color:var(--silver);opacity:.6;text-transform:uppercase;font-style:italic;margin-bottom:3px;}
+.si-val{font-family:'Cinzel Decorative',serif;font-size:1.25rem;color:var(--glow);}
+.si-meaning{font-size:.66rem;font-style:italic;color:#c4b5d8;margin-top:2px;}
+.sig-note{font-size:.76rem;font-style:italic;color:#c4b5d8;line-height:1.55;border-top:1px solid rgba(91,33,182,.2);padding-top:10px;}
+.sig-note strong{color:var(--gold2);font-style:normal;}
+.card{background:var(--card);border:1px solid var(--rim);border-radius:20px;padding:22px;margin-bottom:16px;box-shadow:0 8px 40px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.04);animation:fadeUp .6s ease both;}
+.card-title{font-family:'Cinzel Decorative',serif;font-size:.58rem;letter-spacing:.18em;color:var(--gold);text-transform:uppercase;margin-bottom:13px;}
+.fmt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.fmt-btn{background:rgba(0,0,0,.2);border:1px solid var(--rim);border-radius:11px;padding:10px 6px;cursor:pointer;text-align:center;color:var(--silver);font-family:'Cormorant Garamond',serif;transition:all .2s;}
+.fmt-btn .fn{display:block;font-size:.78rem;font-weight:600;}
+.fmt-btn .fd{display:block;font-size:.64rem;opacity:.5;font-style:italic;margin-top:2px;}
+.fmt-btn:hover,.fmt-btn.active{border-color:var(--gold);color:var(--gold2);background:rgba(201,168,76,.08);box-shadow:0 0 16px rgba(201,168,76,.12);}
+.inp-tabs{display:flex;border:1px solid var(--rim);border-radius:12px;overflow:hidden;margin-bottom:14px;}
+.inp-tab{flex:1;padding:9px;background:transparent;border:none;color:var(--silver);font-family:'Cormorant Garamond',serif;font-size:.82rem;font-style:italic;cursor:pointer;transition:all .2s;text-align:center;}
+.inp-tab.active{background:rgba(201,168,76,.1);color:var(--gold2);}
+.inp-tab:not(:last-child){border-right:1px solid var(--rim);}
+.chip-zone{display:flex;align-items:center;flex-wrap:wrap;gap:7px;min-height:54px;padding:10px 12px;background:rgba(0,0,0,.3);border:1px solid var(--rim);border-radius:13px;cursor:text;transition:border-color .2s;margin-bottom:9px;}
+.chip-zone:focus-within{border-color:var(--gold);box-shadow:0 0 0 2px rgba(201,168,76,.08);}
+.chip-zone.shake{animation:shake .35s ease;border-color:var(--red)!important;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
+.num-chip{display:flex;align-items:center;gap:5px;background:linear-gradient(135deg,#5b21b6,#3730a3);border:1px solid rgba(167,139,250,.4);border-radius:8px;padding:5px 10px;font-family:'Cinzel Decorative',serif;font-size:.76rem;color:#e0d8ff;cursor:pointer;animation:chipIn .2s cubic-bezier(.34,1.56,.64,1) both;}
+.num-chip .cx{font-size:.58rem;opacity:.5;}
+@keyframes chipIn{from{opacity:0;transform:scale(.6);}to{opacity:1;transform:scale(1);}}
+.num-raw{background:none;border:none;outline:none;color:#e2d9f3;font-family:'Cinzel Decorative',serif;font-size:.85rem;width:60px;flex-shrink:0;}
+.num-raw::placeholder{color:rgba(155,168,194,.3);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.82rem;}
+.dream-wrap{display:none;}
+.dream-wrap.show{display:block;}
+.dream-ta{width:100%;min-height:78px;background:rgba(0,0,0,.3);border:1px solid var(--rim);border-radius:13px;padding:12px 14px;color:#e2d9f3;font-family:'Cormorant Garamond',serif;font-size:.95rem;font-style:italic;line-height:1.6;resize:vertical;outline:none;transition:border-color .2s;margin-bottom:9px;}
+.dream-ta:focus{border-color:var(--gold);}
+.dream-ta::placeholder{color:rgba(155,168,194,.3);}
+.dream-pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px;}
+.dp{font-size:.7rem;font-style:italic;padding:4px 9px;border-radius:20px;border:1px solid var(--rim);color:var(--silver);cursor:pointer;transition:all .15s;background:transparent;}
+.dp:hover{border-color:var(--glow);color:var(--glow);}
+.inp-hint{font-size:.76rem;font-style:italic;color:var(--silver);opacity:.6;margin-bottom:14px;}
+.method-row{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
+.meth-btn{flex:1;min-width:78px;padding:8px 5px;border-radius:9px;border:1px solid var(--rim);background:transparent;color:var(--silver);font-family:'Cormorant Garamond',serif;font-size:.76rem;font-style:italic;cursor:pointer;transition:all .2s;text-align:center;position:relative;}
+.meth-btn.active{border-color:var(--glow);color:var(--glow);background:rgba(167,139,250,.08);}
+.pro-pip{position:absolute;top:-6px;right:-4px;background:var(--pro);color:#000;font-size:.46rem;font-family:'Cinzel Decorative',serif;padding:2px 5px;border-radius:6px;font-style:normal;display:none;}
+.pro-pip.show{display:block;}
+.rows-row{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.rows-lbl{font-size:.78rem;font-style:italic;color:var(--silver);white-space:nowrap;}
+.rows-btns{display:flex;gap:6px;}
+.row-btn{width:34px;height:34px;border-radius:8px;border:1px solid var(--rim);background:rgba(0,0,0,.2);color:var(--silver);font-family:'Cinzel Decorative',serif;font-size:.74rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;position:relative;}
+.row-btn:hover,.row-btn.active{border-color:var(--gold);color:var(--gold2);background:rgba(201,168,76,.08);}
+.row-pip{position:absolute;top:-5px;right:-4px;width:12px;height:12px;background:var(--pro);border-radius:50%;display:none;align-items:center;justify-content:center;font-size:.4rem;color:#000;}
+.row-pip.show{display:flex;}
+.err-msg{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.22);border-radius:10px;padding:11px 14px;color:#fca5a5;font-size:.8rem;font-style:italic;margin-bottom:13px;display:none;}
+.gen-btn{width:100%;padding:16px;border-radius:14px;border:1px solid var(--gold);background:linear-gradient(135deg,rgba(201,168,76,.18),rgba(201,168,76,.06));color:var(--gold2);font-family:'Cinzel Decorative',serif;font-size:.9rem;letter-spacing:.08em;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;}
+.gen-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(201,168,76,.35),rgba(201,168,76,.12));opacity:0;transition:opacity .3s;}
+.gen-btn:hover::before{opacity:1;}
+.gen-btn:hover{box-shadow:0 0 32px rgba(201,168,76,.25);transform:translateY(-1px);}
+.gen-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.gen-btn span{position:relative;z-index:1;}
+.results{display:none;}
+.loading{text-align:center;padding:40px;color:var(--silver);font-style:italic;font-size:.92rem;}
+.spinner{width:36px;height:36px;border:2px solid var(--rim);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 13px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.interp-box{background:linear-gradient(135deg,rgba(45,212,191,.06),rgba(30,58,95,.05));border:1px solid rgba(45,212,191,.2);border-radius:13px;padding:15px 18px;margin-bottom:15px;font-size:.85rem;font-style:italic;color:#99f6e4;line-height:1.7;}
+.interp-box strong{display:block;margin-bottom:6px;font-family:'Cinzel Decorative',serif;font-size:.55rem;letter-spacing:.16em;color:var(--teal);font-style:normal;text-transform:uppercase;}
+.reading-box{background:linear-gradient(135deg,rgba(91,33,182,.08),rgba(55,48,163,.06));border:1px solid rgba(91,33,182,.25);border-radius:13px;padding:16px 18px;margin-bottom:18px;font-size:.88rem;font-style:italic;color:#c4b5d8;line-height:1.75;}
+.reading-box strong{display:block;margin-bottom:7px;font-family:'Cinzel Decorative',serif;font-size:.55rem;letter-spacing:.16em;color:var(--glow);font-style:normal;text-transform:uppercase;}
+.tkts-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;}
+.tkts-title{font-family:'Cinzel Decorative',serif;font-size:.58rem;letter-spacing:.16em;color:var(--gold);text-transform:uppercase;}
+.tkts-count{font-size:.72rem;font-style:italic;color:var(--silver);opacity:.6;}
+.legend{display:flex;gap:13px;flex-wrap:wrap;font-size:.7rem;font-style:italic;color:var(--silver);opacity:.6;margin-bottom:14px;}
+.ldot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:3px;vertical-align:middle;}
+.ticket{background:var(--card2);border:1px solid var(--rim);border-radius:15px;padding:14px 16px;margin-bottom:9px;display:flex;align-items:center;gap:11px;transition:all .25s;animation:tickIn .4s cubic-bezier(.34,1.2,.64,1) both;box-shadow:0 3px 16px rgba(0,0,0,.35);}
+@keyframes tickIn{from{opacity:0;transform:translateX(-12px);}to{opacity:1;transform:translateX(0);}}
+.ticket:hover{border-color:rgba(201,168,76,.28);}
+.tkt-num{font-family:'Cinzel Decorative',serif;font-size:.52rem;color:var(--silver);opacity:.4;min-width:20px;text-align:center;}
+.tkt-balls{display:flex;gap:6px;flex:1;flex-wrap:wrap;align-items:center;}
+.ball{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cinzel Decorative',serif;font-size:.68rem;font-weight:700;position:relative;flex-shrink:0;transition:transform .18s;}
+.ball:hover{transform:scale(1.1) translateY(-2px);}
+.ball::after{content:'';position:absolute;top:4px;left:6px;width:11px;height:5px;border-radius:50%;background:rgba(255,255,255,.18);transform:rotate(-20deg);}
+.ball.db{background:linear-gradient(135deg,#6d28d9,#4c1d95);border:2px solid rgba(167,139,250,.65);color:#ede0ff;box-shadow:0 0 13px rgba(109,40,217,.5);}
+.ball.gb{background:linear-gradient(135deg,#1e3a5f,#0f2240);border:2px solid rgba(96,165,250,.4);color:#bfdbfe;}
+.ball.bb{background:linear-gradient(135deg,#7c2d12,#431407);border:2px solid rgba(251,146,60,.5);color:#fed7aa;}
+.ball-sep{width:1px;background:var(--rim);height:28px;margin:0 3px;flex-shrink:0;}
+.copy-btn{background:none;border:1px solid var(--rim);border-radius:7px;color:var(--silver);padding:5px 8px;font-size:.64rem;cursor:pointer;font-family:'Cormorant Garamond',serif;transition:all .2s;}
+.copy-btn:hover{border-color:var(--gold);color:var(--gold);}
+.regen-btn{width:100%;padding:11px;border-radius:10px;border:1px dashed var(--rim);background:transparent;color:var(--silver);font-family:'Cormorant Garamond',serif;font-size:.84rem;font-style:italic;cursor:pointer;transition:all .2s;margin-top:6px;}
+.regen-btn:hover{border-color:var(--gold);color:var(--gold);}
+.limit-banner{background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.22);border-radius:12px;padding:13px 16px;display:none;align-items:center;gap:11px;margin-bottom:13px;}
+.limit-banner.show{display:flex;}
+.lb-txt{flex:1;font-size:.8rem;line-height:1.5;}
+.lb-txt strong{color:var(--gold2);}
+.lb-btn{white-space:nowrap;padding:6px 12px;border-radius:7px;border:1px solid var(--gold);background:transparent;color:var(--gold2);font-size:.68rem;font-family:'Cinzel Decorative',serif;cursor:pointer;}
+.pro-banner{background:linear-gradient(135deg,rgba(245,158,11,.1),rgba(201,168,76,.06));border:1px solid rgba(245,158,11,.3);border-radius:13px;padding:13px 18px;align-items:center;gap:11px;margin-bottom:16px;display:none;}
+.pro-banner.show{display:flex;}
+.pb-icon{font-size:1.3rem;}
+.pb-title{font-family:'Cinzel Decorative',serif;font-size:.7rem;letter-spacing:.1em;color:var(--pro2);margin-bottom:2px;}
+.pb-sub{font-size:.73rem;font-style:italic;color:var(--silver);opacity:.7;}
+.pro-card{background:linear-gradient(135deg,rgba(245,158,11,.07),rgba(201,168,76,.04));border:1px solid rgba(245,158,11,.3);border-radius:20px;padding:26px 22px;margin-bottom:16px;position:relative;overflow:hidden;animation:fadeUp .6s ease .2s both;}
+.pro-card-title{font-family:'Cinzel Decorative',serif;font-size:1rem;background:linear-gradient(135deg,var(--pro),var(--pro2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:5px;}
+.pro-card-sub{font-size:.86rem;font-style:italic;color:var(--silver);margin-bottom:18px;line-height:1.6;}
+.pro-feats{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:20px;}
+.pf{display:flex;align-items:flex-start;gap:7px;font-size:.8rem;line-height:1.5;}
+.pf .pi{color:var(--pro);flex-shrink:0;}
+.pf .pt{color:#d4c9a8;}
+.pf .pt strong{color:var(--pro2);}
+.price-row{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.price-opt{flex:1;min-width:120px;border:1px solid rgba(245,158,11,.25);border-radius:11px;padding:11px 13px;cursor:pointer;transition:all .2s;position:relative;}
+.price-opt.active-plan{border-color:var(--pro);background:rgba(245,158,11,.1);}
+.po-lbl{font-family:'Cinzel Decorative',serif;font-size:.58rem;letter-spacing:.12em;color:var(--pro);text-transform:uppercase;margin-bottom:3px;}
+.po-price{font-size:1.3rem;font-weight:600;color:#fff;line-height:1.1;}
+.po-per{font-size:.68rem;color:var(--silver);font-style:italic;}
+.po-save{position:absolute;top:-9px;right:10px;background:var(--pro);color:#000;font-size:.52rem;font-family:'Cinzel Decorative',serif;padding:2px 7px;border-radius:6px;}
+.upgrade-btn{width:100%;padding:14px;border-radius:12px;border:1px solid var(--pro);background:linear-gradient(135deg,rgba(245,158,11,.25),rgba(245,158,11,.1));color:var(--pro2);font-family:'Cinzel Decorative',serif;font-size:.86rem;letter-spacing:.08em;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;}
+.upgrade-btn:hover{box-shadow:0 0 30px rgba(245,158,11,.28);transform:translateY(-1px);}
+.upgrade-btn span{position:relative;z-index:1;}
+.trial-note{text-align:center;font-size:.7rem;font-style:italic;color:var(--silver);opacity:.5;margin-top:9px;}
+.history-section{display:none;margin-top:4px;}
+.history-section.show{display:block;}
+.history-entry{background:var(--card);border:1px solid var(--rim);border-radius:11px;padding:11px 14px;margin-bottom:7px;display:flex;align-items:center;gap:10px;}
+.he-date{color:var(--silver);opacity:.45;font-style:italic;white-space:nowrap;font-size:.68rem;}
+.he-nums{flex:1;color:#c4b5d8;font-family:'Cinzel Decorative',serif;font-size:.66rem;}
+.he-fmt{font-size:.63rem;color:var(--gold);opacity:.65;}
+.modal-overlay{position:fixed;inset:0;z-index:100;background:rgba(6,4,15,.88);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--card);border:1px solid var(--rim2);border-radius:20px;padding:30px 26px;width:100%;max-width:420px;position:relative;box-shadow:0 20px 80px rgba(0,0,0,.7);animation:slideUp .3s cubic-bezier(.34,1.2,.64,1) both;}
+@keyframes slideUp{from{opacity:0;transform:translateY(18px) scale(.97);}to{opacity:1;transform:translateY(0) scale(1);}}
+.modal-x{position:absolute;top:13px;right:16px;background:none;border:none;color:var(--silver);font-size:1.25rem;cursor:pointer;opacity:.5;}
+.modal-x:hover{opacity:1;}
+.modal-title{font-family:'Cinzel Decorative',serif;font-size:1rem;background:linear-gradient(135deg,var(--pro),var(--pro2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:7px;}
+.modal-sub{font-size:.83rem;font-style:italic;color:var(--silver);margin-bottom:18px;line-height:1.5;}
+.modal-feats{margin-bottom:18px;display:grid;gap:8px;}
+.mf{display:flex;gap:8px;font-size:.81rem;line-height:1.5;}
+.mf .mi{color:var(--pro);flex-shrink:0;}
+.mf .mt{color:#d4c9a8;}
+.mf .mt strong{color:var(--pro2);}
+.modal-prices{display:flex;gap:10px;margin-bottom:18px;}
+.mpo{flex:1;border:1px solid rgba(245,158,11,.25);border-radius:11px;padding:11px;cursor:pointer;transition:all .2s;text-align:center;}
+.mpo.active-plan{border-color:var(--pro);background:rgba(245,158,11,.1);}
+.mpl{font-family:'Cinzel Decorative',serif;font-size:.56rem;letter-spacing:.12em;color:var(--pro);text-transform:uppercase;margin-bottom:3px;}
+.mpp{font-size:1.2rem;font-weight:600;color:#fff;}
+.mpd{font-size:.66rem;color:var(--silver);font-style:italic;}
+.mps{font-size:.6rem;color:var(--pro2);font-style:italic;margin-top:2px;}
+.modal-upgrade-btn{width:100%;padding:14px;border-radius:12px;border:1px solid var(--pro);background:linear-gradient(135deg,rgba(245,158,11,.3),rgba(245,158,11,.12));color:var(--pro2);font-family:'Cinzel Decorative',serif;font-size:.88rem;letter-spacing:.08em;cursor:pointer;transition:all .3s;}
+.modal-upgrade-btn:hover{box-shadow:0 0 28px rgba(245,158,11,.28);transform:translateY(-1px);}
+.footer{text-align:center;padding:28px 0 0;font-size:.7rem;font-style:italic;color:var(--silver);opacity:.35;line-height:1.8;border-top:1px solid var(--rim);margin-top:28px;}
+.footer a{color:var(--gold);text-decoration:none;opacity:.7;}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-15px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+@media(max-width:480px){
+  .ball{width:34px;height:34px;font-size:.62rem;}
+  .fmt-grid{grid-template-columns:repeat(2,1fr);}
+  .pro-feats{grid-template-columns:1fr;}
+  .price-row,.modal-prices{flex-direction:column;}
+  .sig-grid{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+<canvas id="canvas-bg"></canvas>
+<div class="app">
+
+  <div class="topbar">
+    <div class="brand">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+        <circle cx="18" cy="18" r="16" stroke="#c9a84c" stroke-width="1" opacity=".5"/>
+        <ellipse cx="18" cy="18" rx="15" ry="9" stroke="#c9a84c" stroke-width=".8" opacity=".4"/>
+        <circle cx="18" cy="18" r="5.5" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+        <circle cx="18" cy="18" r="2.5" fill="#c9a84c" opacity=".9"/>
+      </svg>
+      <span class="brand-name">DayDream Lotto</span>
+    </div>
+    <div class="topbar-right">
+      <span class="tier-pill" id="tierPill">FREE</span>
+      <button class="upgrade-top" id="upgradeTopBtn" onclick="openModal()">✦ Go Pro</button>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-eye">
+      <svg viewBox="0 0 72 72" fill="none">
+        <ellipse cx="36" cy="36" rx="33" ry="21" stroke="#c9a84c" stroke-width="1.5" opacity=".55"/>
+        <circle cx="36" cy="36" r="13" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+        <circle cx="36" cy="36" r="7" fill="url(#ep)"/>
+        <circle cx="36" cy="36" r="3" fill="#c9a84c" opacity=".9"/>
+        <circle cx="32" cy="32" r="2.5" fill="white" opacity=".35"/>
+        <defs>
+          <radialGradient id="ep" cx="50%" cy="50%">
+            <stop offset="0%" stop-color="#7c3aed"/>
+            <stop offset="100%" stop-color="#3730a3"/>
+          </radialGradient>
+        </defs>
+      </svg>
+    </div>
+    <h1>DayDream Lotto</h1>
+    <p class="tagline">Dream it. <em>Decode it.</em> Play it.</p>
+  </div>
+
+  <div class="align-bar">
+    <div class="align-ring-wrap">
+      <svg class="align-ring" width="50" height="50" viewBox="0 0 50 50">
+        <circle cx="25" cy="25" r="21" fill="none" stroke="#2c2250" stroke-width="4"/>
+        <circle id="alignRing" cx="25" cy="25" r="21" fill="none" stroke="#c9a84c" stroke-width="4"
+          stroke-dasharray="131.9" stroke-dashoffset="131.9" stroke-linecap="round"
+          style="transition:stroke-dashoffset 1.2s ease,stroke 1.2s ease;"/>
+      </svg>
+      <div class="align-num" id="alignNum">—</div>
+    </div>
+    <div class="align-info">
+      <div class="at">Today's Dream Alignment</div>
+      <div class="ad" id="alignDesc">Calculating…</div>
+      <div class="ap" id="alignPhase"></div>
+    </div>
+  </div>
+
+  <div class="sig-card" id="sigCard">
+    <div class="sig-title">✦ Your Dream Signature</div>
+    <div class="sig-grid" id="sigGrid"></div>
+    <div class="sig-note" id="sigNote"></div>
+  </div>
+
+  <div class="pro-banner" id="proBanner">
+    <span class="pb-icon">✦</span>
+    <div>
+      <div class="pb-title">Pro Oracle Active</div>
+      <div class="pb-sub">All methods, unlimited rows &amp; full history unlocked</div>
+    </div>
+  </div>
+
+  <div class="limit-banner" id="limitBanner">
+    <span style="font-size:1.2rem;flex-shrink:0;">🔮</span>
+    <div class="lb-txt"><strong>Daily readings used.</strong> Free plan: 3 per day. Upgrade for unlimited.</div>
+    <button class="lb-btn" onclick="openModal()">Upgrade</button>
+  </div>
+
+  <div class="card" style="animation-delay:.05s">
+    <div class="card-title">✦ Choose Your Lottery</div>
+    <div class="fmt-grid" id="fmtGrid">
+      <button class="fmt-btn active" data-pick="6" data-max="52" data-bonus="1" data-bmax="52" data-name="SA Lotto">
+        <span class="fn">SA Lotto</span><span class="fd">6/52 South Africa</span>
+      </button>
+      <button class="fmt-btn" data-pick="5" data-max="50" data-bonus="1" data-bmax="20" data-name="SA PowerBall">
+        <span class="fn">SA PowerBall</span><span class="fd">5+1 South Africa</span>
+      </button>
+      <button class="fmt-btn" data-pick="5" data-max="36" data-bonus="0" data-name="Daily Lotto">
+        <span class="fn">Daily Lotto</span><span class="fd">SA 5/36</span>
+      </button>
+      <button class="fmt-btn" data-pick="6" data-max="49" data-bonus="0" data-name="Lotto 6/49">
+        <span class="fn">Pick 6/49</span><span class="fd">Classic</span>
+      </button>
+      <button class="fmt-btn" data-pick="5" data-max="70" data-bonus="1" data-bmax="26" data-name="Powerball">
+        <span class="fn">Powerball</span><span class="fd">5+1 bonus</span>
+      </button>
+      <button class="fmt-btn" data-pick="5" data-max="50" data-bonus="2" data-bmax="12" data-name="EuroMillions">
+        <span class="fn">EuroMillions</span><span class="fd">5+2 stars</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="card" style="animation-delay:.1s">
+    <div class="card-title">✦ Your Dream Input</div>
+    <div class="inp-tabs">
+      <button class="inp-tab active" id="tabNums" onclick="switchTab('numbers')">🔢 I saw numbers</button>
+      <button class="inp-tab" id="tabDream" onclick="switchTab('dream')">💭 I had a dream</button>
+    </div>
+    <div id="numWrap">
+      <div class="chip-zone" id="chipZone" onclick="document.getElementById('numRaw').focus()">
+        <input type="number" id="numRaw" class="num-raw" placeholder="Type a number, press Enter…" min="1" max="99">
+      </div>
+      <div class="inp-hint" id="numHint">Enter numbers you saw in your dream — we'll complete the rest.</div>
+    </div>
+    <div class="dream-wrap" id="dreamWrap">
+      <textarea class="dream-ta" id="dreamTa" placeholder="Describe your dream… e.g. 'I was flying over water, a golden door appeared…'"></textarea>
+      <div class="dream-pills">
+        <span class="dp" onclick="fillDream('Flying over water at sunset')">Flying over water</span>
+        <span class="dp" onclick="fillDream('A golden door and a white horse')">Golden door</span>
+        <span class="dp" onclick="fillDream('Falling coins and a full moon')">Falling coins</span>
+        <span class="dp" onclick="fillDream('Fire, snakes and a staircase')">Fire &amp; snakes</span>
+        <span class="dp" onclick="fillDream('Dead relative gave me a gift')">Ancestor visit</span>
+      </div>
+      <div class="inp-hint">The Oracle decodes your dream symbols into lottery numbers.</div>
+    </div>
+    <div class="card-title" style="margin-top:4px">✦ Alignment Method</div>
+    <div class="method-row" id="methodRow">
+      <button class="meth-btn active" data-m="numerology">Numerology</button>
+      <button class="meth-btn" data-m="astro">Cosmic<span class="pro-pip" data-pip="astro">PRO</span></button>
+      <button class="meth-btn" data-m="kabbala">Kabbala<span class="pro-pip" data-pip="kab">PRO</span></button>
+      <button class="meth-btn" data-m="dream">Dream Logic<span class="pro-pip" data-pip="dream">PRO</span></button>
+    </div>
+    <div class="card-title">✦ Sequences to Generate</div>
+    <div class="rows-row">
+      <span class="rows-lbl">Rows:</span>
+      <div class="rows-btns" id="rowsBtns">
+        <button class="row-btn active" data-r="5">5</button>
+        <button class="row-btn" data-r="10">10<span class="row-pip" data-pip="10">★</span></button>
+        <button class="row-btn" data-r="20">20<span class="row-pip" data-pip="20">★</span></button>
+      </div>
+    </div>
+    <div class="err-msg" id="errMsg"></div>
+    <button class="gen-btn" id="genBtn" onclick="generate()">
+      <span>✦ Reveal My Destiny Numbers ✦</span>
+    </button>
+  </div>
+
+  <div class="results" id="results"></div>
+
+  <div class="pro-card" id="proCard">
+    <div class="pro-card-title">✦ DayDream Lotto Pro</div>
+    <div class="pro-card-sub">Unlock deeper alignment — more methods, more rows, and a growing Dream Signature.</div>
+    <div class="pro-feats">
+      <div class="pf"><span class="pi">✦</span><span class="pt"><strong>Dream text input</strong> — symbols decoded to numbers</span></div>
+      <div class="pf"><span class="pi">✦</span><span class="pt"><strong>4 alignment methods</strong> including Kabbala</span></div>
+      <div class="pf"><span class="pi">✦</span><span class="pt"><strong>10 &amp; 20 row</strong> generation</span></div>
+      <div class="pf"><span class="pi">✦</span><span class="pt"><strong>Unlimited</strong> daily readings</span></div>
+    </div>
+    <div class="price-row">
+      <div class="price-opt" data-plan="monthly" onclick="choosePlan('monthly')">
+        <div class="po-lbl">Monthly</div>
+        <div class="po-price">$4.99</div>
+        <div class="po-per">per month</div>
+      </div>
+      <div class="price-opt active-plan" data-plan="annual" onclick="choosePlan('annual')">
+        <div class="po-save">SAVE 40%</div>
+        <div class="po-lbl">Annual</div>
+        <div class="po-price">$35.88</div>
+        <div class="po-per">$2.99/mo · billed yearly</div>
+      </div>
+    </div>
+    <button class="upgrade-btn" onclick="activatePro()"><span>✦ Start 7-Day Free Trial ✦</span></button>
+    <div class="trial-note">Cancel anytime. No charge during your 7-day trial.</div>
+  </div>
+
+  <div class="history-section" id="histSec">
+    <div class="card-title" style="margin-bottom:10px">✦ Your Reading History</div>
+    <div id="histList"></div>
+  </div>
+
+  <div class="footer">
+    <p>DayDream Lotto is for entertainment purposes only.</p>
+    <p>No system guarantees lottery wins — please play responsibly.</p>
+    <p style="margin-top:6px"><a href="/privacy.html">Privacy Policy</a></p>
+    <p style="margin-top:5px;opacity:.5">© 2026 DayDream Lotto · All Rights Reserved</p>
+  </div>
+
+</div>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModal()">×</button>
+    <div class="modal-title">✦ Unlock DayDream Pro</div>
+    <div class="modal-sub">Deeper alignment, dream symbol decoding, and a growing personal signature.</div>
+    <div class="modal-feats">
+      <div class="mf"><span class="mi">✦</span><span class="mt"><strong>Dream text input</strong> — describe your dream, we extract the numbers</span></div>
+      <div class="mf"><span class="mi">✦</span><span class="mt"><strong>4 alignment methods</strong> including Kabbala &amp; Dream Logic</span></div>
+      <div class="mf"><span class="mi">✦</span><span class="mt"><strong>Unlimited readings</strong> with up to 20 rows</span></div>
+      <div class="mf"><span class="mi">✦</span><span class="mt"><strong>Dream Signature</strong> — your dominant numbers tracked over time</span></div>
+    </div>
+    <div class="modal-prices">
+      <div class="mpo" data-plan="monthly" onclick="choosePlan('monthly')">
+        <div class="mpl">Monthly</div>
+        <div class="mpp">$4.99</div>
+        <div class="mpd">per month</div>
+      </div>
+      <div class="mpo active-plan" data-plan="annual" onclick="choosePlan('annual')">
+        <div class="mpl">Annual</div>
+        <div class="mpp">$35.88</div>
+        <div class="mpd">$2.99/month</div>
+        <div class="mps">Save 40% · best value</div>
+      </div>
+    </div>
+    <button class="modal-upgrade-btn" onclick="activatePro()">✦ Start 7-Day Free Trial ✦</button>
+    <div class="trial-note">No charge for 7 days. Cancel anytime.</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const c=document.getElementById('canvas-bg'),ctx=c.getContext('2d');
+  let W,H,stars=[],shot=null;
+  function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight;}
+  function mkStars(){stars=[];for(let i=0;i<200;i++)stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.5+.2,a:Math.random(),da:(Math.random()*.008+.002)*(Math.random()<.5?1:-1),sp:Math.random()*.12+.03});}
+  setInterval(()=>{shot={x:Math.random()*W*.7,y:Math.random()*H*.35,vx:Math.random()*6+4,vy:Math.random()*3+1,life:1,decay:.022};},4500);
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    stars.forEach(s=>{
+      s.a+=s.da;if(s.a>1||s.a<0)s.da*=-1;
+      s.y-=s.sp*.04;if(s.y<0){s.y=H;s.x=Math.random()*W;}
+      ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(255,255,255,${Math.max(0,s.a)})`;ctx.fill();
+    });
+    if(shot){
+      ctx.beginPath();ctx.moveTo(shot.x,shot.y);ctx.lineTo(shot.x-shot.vx*18,shot.y-shot.vy*18);
+      const sg=ctx.createLinearGradient(shot.x,shot.y,shot.x-shot.vx*18,shot.y-shot.vy*18);
+      sg.addColorStop(0,`rgba(201,168,76,${shot.life})`);sg.addColorStop(1,'transparent');
+      ctx.strokeStyle=sg;ctx.lineWidth=1.5;ctx.stroke();
+      shot.x+=shot.vx;shot.y+=shot.vy;shot.life-=shot.decay;
+      if(shot.life<=0||shot.x>W||shot.y>H)shot=null;
+    }
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize',()=>{resize();mkStars();});
+  resize();mkStars();draw();
+})();
+
+let isPro=false,dreamNums=[],inputMode='numbers',activeMethod='numerology',rowCount=5,activePlan='annual';
+let fmt={pick:6,max:52,bonus:1,bmax:52,name:'SA Lotto'};
+let dailyCount=parseInt(localStorage.getItem('ddl_daily')||'0');
+let dailyDate=localStorage.getItem('ddl_date')||'';
+let readingLog=JSON.parse(localStorage.getItem('ddl_history')||'[]');
+const FREE_LIMIT=3;
+
+function todayStr(){return new Date().toISOString().split('T')[0];}
+function resetDaily(){if(dailyDate!==todayStr()){dailyCount=0;dailyDate=todayStr();saveDaily();}}
+function saveDaily(){localStorage.setItem('ddl_daily',String(dailyCount));localStorage.setItem('ddl_date',dailyDate);}
+
+function computeAlignment(){
+  const d=new Date();
+  const seed=d.getFullYear()*10000+((d.getMonth()+1)*100)+d.getDate();
+  const score=42+Math.abs((seed*2654435761)%55);
+  const phases=['New Moon Energy','Waxing Crescent','First Quarter','Waxing Gibbous','Full Moon Peak','Waning Gibbous','Last Quarter','Waning Crescent'];
+  const phase=phases[Math.abs((seed*1234567)%8)];
+  const tiers=[[90,'Exceptional alignment — the dream field is wide open today.','#34d399'],[75,'Strong resonance — your numbers carry real weight today.','#a78bfa'],[60,'Moderate flow — trust your instincts with the sequence.','#c9a84c'],[0,'Quiet field — a few strong anchors will guide you.','#9ba8c2']];
+  const [,desc,col]=tiers.find(([t])=>score>=t);
+  document.getElementById('alignNum').textContent=score;
+  document.getElementById('alignNum').style.color=col;
+  document.getElementById('alignDesc').textContent=desc;
+  document.getElementById('alignPhase').textContent='☽ '+phase;
+  const circ=131.9,offset=circ-(circ*(score/100));
+  setTimeout(()=>{const r=document.getElementById('alignRing');r.style.strokeDashoffset=offset;r.style.stroke=col;},400);
+}
+
+function computeSignature(){
+  const allNums=readingLog.flatMap(h=>h.allNums||[]);
+  if(allNums.length<3)return;
+  const freq={};allNums.forEach(n=>{freq[n]=(freq[n]||0)+1;});
+  const sorted=Object.entries(freq).sort((a,b)=>b[1]-a[1]);
+  const core=+(sorted[0]?.[0]||7);
+  const shadow=+(sorted[sorted.length-1]?.[0]||13);
+  let sum=allNums.reduce((a,b)=>a+b,0);
+  while(sum>33&&![11,22,33].includes(sum)){const d2=String(sum).split('').reduce((a,c)=>a+parseInt(c),0);if(d2===sum)break;sum=d2;}
+  const meanings={1:'Beginnings',2:'Balance',3:'Creativity',4:'Foundation',5:'Freedom',6:'Harmony',7:'Mystery',8:'Abundance',9:'Completion',11:'Illumination',22:'Mastery',33:'Guidance'};
+  const topNums=sorted.slice(0,3).map(e=>e[0]).join(', ');
+  document.getElementById('sigGrid').innerHTML=`
+    <div class="sig-item"><div class="si-lbl">Core</div><div class="si-val">${core}</div><div class="si-meaning">${meanings[core%34]||'Power'}</div></div>
+    <div class="sig-item"><div class="si-lbl">Shadow</div><div class="si-val">${shadow}</div><div class="si-meaning">${meanings[shadow%34]||'Depth'}</div></div>
+    <div class="sig-item"><div class="si-lbl">Expansion</div><div class="si-val">${sum}</div><div class="si-meaning">${meanings[sum]||'Growth'}</div></div>`;
+  document.getElementById('sigNote').innerHTML=`<strong>Dominant pattern:</strong> ${topNums} appear most in your readings.`;
+  document.getElementById('sigCard').classList.add('show');
+}
+
+document.getElementById('fmtGrid').addEventListener('click',e=>{
+  const b=e.target.closest('.fmt-btn');if(!b)return;
+  document.querySelectorAll('.fmt-btn').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  fmt={pick:+b.dataset.pick,max:+b.dataset.max,bonus:+(b.dataset.bonus||0),bmax:+(b.dataset.bmax||0),name:b.dataset.name};
+  updateHint();
+});
+
+function switchTab(mode){
+  inputMode=mode;
+  document.getElementById('tabNums').classList.toggle('active',mode==='numbers');
+  document.getElementById('tabDream').classList.toggle('active',mode==='dream');
+  document.getElementById('numWrap').style.display=mode==='numbers'?'block':'none';
+  document.getElementById('dreamWrap').classList.toggle('show',mode==='dream');
+  if(mode==='dream'&&!isPro){openModal();return;}
+  updateHint();
+}
+function fillDream(txt){document.getElementById('dreamTa').value=txt;}
+function updateHint(){document.getElementById('numHint').textContent=`Enter numbers you saw in your dream (${fmt.pick} needed for ${fmt.name}) — we'll complete the rest.`;}
+
+const chipZone=document.getElementById('chipZone');
+const numRaw=document.getElementById('numRaw');
+function addChip(n){
+  if(isNaN(n)||n<1||n>fmt.max){chipZone.classList.add('shake');setTimeout(()=>chipZone.classList.remove('shake'),400);return;}
+  if(dreamNums.includes(n)){chipZone.classList.add('shake');setTimeout(()=>chipZone.classList.remove('shake'),400);return;}
+  dreamNums.push(n);
+  const chip=document.createElement('div');chip.className='num-chip';chip.dataset.n=n;
+  chip.innerHTML=`${n}<span class="cx">✕</span>`;
+  chip.addEventListener('click',()=>{dreamNums=dreamNums.filter(x=>x!==n);chip.remove();});
+  chipZone.insertBefore(chip,numRaw);
+}
+numRaw.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '||e.key===','){e.preventDefault();const v=parseInt(numRaw.value);if(v)addChip(v);numRaw.value='';}});
+numRaw.addEventListener('blur',()=>{const v=parseInt(numRaw.value);if(v){addChip(v);numRaw.value='';}});
+
+document.getElementById('methodRow').addEventListener('click',e=>{
+  const b=e.target.closest('.meth-btn');if(!b)return;
+  const m=b.dataset.m;
+  if(m!=='numerology'&&!isPro){openModal();return;}
+  document.querySelectorAll('.meth-btn').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');activeMethod=m;
+});
+
+document.getElementById('rowsBtns').addEventListener('click',e=>{
+  const b=e.target.closest('.row-btn');if(!b)return;
+  const r=+b.dataset.r;
+  if(r>5&&!isPro){openModal();return;}
+  document.querySelectorAll('.row-btn').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');rowCount=r;
+});
+
+function showErr(msg){const el=document.getElementById('errMsg');el.textContent=msg;el.style.display='block';setTimeout(()=>el.style.display='none',6000);}
+function clearResults(){document.getElementById('results').innerHTML='';}
+
+async function generate(){
+  const isDream=inputMode==='dream';
+  const dreamTxt=document.getElementById('dreamTa').value.trim();
+  if(!isDream&&!dreamNums.length){showErr('Please enter at least one dream number.');return;}
+  if(isDream&&!dreamTxt){showErr('Please describe your dream first.');return;}
+  resetDaily();
+  if(!isPro&&dailyCount>=FREE_LIMIT){document.getElementById('limitBanner').classList.add('show');document.getElementById('results').style.display='none';return;}
+  const btn=document.getElementById('genBtn');
+  btn.disabled=true;clearResults();
+  document.getElementById('limitBanner').classList.remove('show');
+  const res=document.getElementById('results');
+  res.style.display='block';
+  res.innerHTML=`<div class="loading"><div class="spinner"></div>${isDream?'Decoding your dream…':'Reading your dream field…'}</div>`;
+  try{
+    const prompt=isDream?buildDreamPrompt(dreamTxt):buildNumPrompt();
+    const resp=await fetch('/api/oracle',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({prompt})
+    });
+    const data=await resp.json();
+    if(!resp.ok){showErr(data.error||'The Oracle is resting. Please try again.');res.style.display='none';btn.disabled=false;return;}
+    const txt=data.content?.map(b=>b.text||'').join('')||'';
+    const clean=txt.replace(/```json|```/g,'').trim();
+    let parsed;
+    try{parsed=JSON.parse(clean);}
+    catch(je){showErr('The Oracle returned an unexpected response. Please try again.');res.style.display='none';btn.disabled=false;return;}
+    if(!isPro){dailyCount++;saveDaily();}
+    saveReading(parsed);
+    renderResults(parsed,isDream);
+  }catch(err){
+    if(!navigator.onLine){showErr('No internet connection. Please check and try again.');}
+    else{showErr('Unexpected error: '+err.message+'. Please try again.');}
+    res.style.display='none';
+  }
+  btn.disabled=false;
+}
+
+function buildNumPrompt(){
+  const methods={
+    numerology:'Use classical numerology: reduce each dream number to its root digit (1–9), find the sum and its root, identify missing numbers that balance the vibration toward a master number (11, 22, 33).',
+    astro:'Use cosmic/astrological logic: find Fibonacci-adjacent numbers, golden-ratio harmonics, and sacred cycles (7,12,22,40).',
+    kabbala:'Use Kabbalistic gematria: assign letter values, find numbers whose combined gematria creates a balanced Tree of Life pattern.',
+    dream:'Use pure dream symbolism: interpret numbers as dream-codes (7=mystery, 13=transformation, 21=achievement). Find mirror numbers and additive pairs.'
+  };
+  return `You are the DayDream Lotto Oracle.
+Dream numbers given: ${dreamNums.join(', ')}
+Lottery: ${fmt.name} — ${fmt.pick} main numbers from 1–${fmt.max}${fmt.bonus>0?`, plus ${fmt.bonus} bonus number(s) from 1–${fmt.bmax}`:''}
+Method: ${methods[activeMethod]}
+Generate exactly ${rowCount} ticket rows.
+Rules: keep all dream numbers exactly as given; complete each row to exactly ${fmt.pick} unique main numbers within 1–${fmt.max}; vary the completions meaningfully across rows${fmt.bonus>0?`; each row needs ${fmt.bonus} bonus number(s) from 1–${fmt.bmax} unique from main numbers`:''}.
+Write 2–4 sentences of mystical poetic Oracle reasoning.
+Respond ONLY with minified JSON (no markdown, no extra text):
+{"reasoning":"string","tickets":[{"main":[numbers],"dreamIdx":[indices of dream numbers in main array],"bonus":[bonus numbers or empty array]}]}`;
+}
+
+function buildDreamPrompt(dreamTxt){
+  return `You are the DayDream Lotto Oracle — a dream symbol decoder.
+The user described their dream: "${dreamTxt}"
+Lottery: ${fmt.name} — ${fmt.pick} main numbers from 1–${fmt.max}${fmt.bonus>0?`, plus ${fmt.bonus} bonus number(s) from 1–${fmt.bmax}`:''}
+Generate exactly ${rowCount} complete lottery rows by extracting symbols and mapping them to numbers.
+Write a dream interpretation, symbols extracted, and Oracle reasoning.
+Rules: all main numbers 1–${fmt.max}, ${fmt.pick} unique per row${fmt.bonus>0?`; ${fmt.bonus} bonus number(s) from 1–${fmt.bmax}`:''}; no repeats within a row.
+Respond ONLY with minified JSON:
+{"dreamInterpretation":"string","symbolsExtracted":"string","reasoning":"string","tickets":[{"main":[numbers],"dreamIdx":[indices],"bonus":[numbers or empty]}]}`;
+}
+
+function renderResults(data,isDream){
+  const res=document.getElementById('results');
+  const hasBonus=fmt.bonus>0;
+  let html='';
+  if(isDream&&data.dreamInterpretation){
+    html+=`<div class="interp-box"><strong>✦ Dream Interpretation</strong>${esc(data.dreamInterpretation)}<br><br><em style="font-size:.78rem;color:#5eead4;opacity:.8;">Symbols: ${esc(data.symbolsExtracted||'')}</em></div>`;
+  }
+  html+=`<div class="reading-box"><strong>✦ Oracle's Reading</strong>${esc(data.reasoning)}</div>`;
+  html+=`<div class="tkts-hdr"><span class="tkts-title">✦ Destiny Sequences</span><span class="tkts-count">${data.tickets.length} rows · ${fmt.name}</span></div>`;
+  html+=`<div class="legend"><span><span class="ldot" style="background:#6d28d9;border:1px solid #a78bfa"></span>${isDream?'Symbol anchor':'Dream number'}</span><span><span class="ldot" style="background:#1e3a5f;border:1px solid #60a5fa"></span>Aligned</span>${hasBonus?'<span><span class="ldot" style="background:#7c2d12;border:1px solid #fb923c"></span>Bonus</span>':''}</div>`;
+  data.tickets.forEach((t,i)=>{
+    const delay=(i*.07).toFixed(2);
+    const balls=t.main.map((n,idx)=>{const d=t.dreamIdx?.includes(idx);return `<div class="ball ${d?'db':'gb'}">${n}</div>`;}).join('');
+    const bonus=(t.bonus||[]).map(n=>`<div class="ball bb">${n}</div>`).join('');
+    const allStr=[...t.main,...(t.bonus||[])].join(' – ');
+    html+=`<div class="ticket" style="animation-delay:${delay}s"><span class="tkt-num">#${i+1}</span><div class="tkt-balls">${balls}${bonus?`<div class="ball-sep"></div>${bonus}`:''}</div><button class="copy-btn" onclick="copyTicket('${allStr}',this)">Copy</button></div>`;
+  });
+  if(!isPro&&dailyCount>=FREE_LIMIT){
+    html+=`<div style="background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:16px;margin-top:8px;text-align:center;"><div style="font-family:'Cinzel Decorative',serif;font-size:.68rem;color:var(--gold2);margin-bottom:5px;">Daily Readings Used</div><div style="font-size:.8rem;font-style:italic;color:var(--silver);margin-bottom:13px;">Upgrade for unlimited.</div><button class="upgrade-btn" style="padding:12px" onclick="openModal()"><span>✦ Upgrade to Pro</span></button></div>`;
+  }else{
+    html+=`<button class="regen-btn" onclick="generate()">✦ Generate New Sequences</button>`;
+  }
+  res.innerHTML=html;
+}
+
+function copyTicket(txt,btn){
+  navigator.clipboard.writeText(txt).then(()=>{btn.textContent='Copied!';btn.style.borderColor='var(--gold)';btn.style.color='var(--gold)';setTimeout(()=>{btn.textContent='Copy';btn.style.borderColor='';btn.style.color='';},2000);}).catch(()=>{btn.textContent='!';});
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function saveReading(data){
+  const allNums=data.tickets.flatMap(t=>[...t.main,...(t.bonus||[])]);
+  const entry={date:new Date().toLocaleString('en-ZA',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}),nums:data.tickets[0]?.main?.join(' – ')||'',fmt:fmt.name,allNums};
+  readingLog.unshift(entry);
+  if(readingLog.length>50)readingLog=readingLog.slice(0,50);
+  localStorage.setItem('ddl_history',JSON.stringify(readingLog));
+  if(isPro){renderHistory();computeSignature();}
+}
+function renderHistory(){
+  const list=document.getElementById('histList');
+  if(!readingLog.length){list.innerHTML=`<p style="font-size:.8rem;font-style:italic;color:var(--silver);opacity:.5;padding:10px 0">No readings yet.</p>`;return;}
+  list.innerHTML=readingLog.slice(0,10).map(h=>`<div class="history-entry"><span class="he-date">${h.date}</span><span class="he-nums">${h.nums}</span><span class="he-fmt">${h.fmt}</span></div>`).join('');
+}
+
+function updateProUI(){
+  const pill=document.getElementById('tierPill');
+  const upBtn=document.getElementById('upgradeTopBtn');
+  if(isPro){
+    pill.textContent='PRO';pill.classList.add('is-pro');
+    upBtn.style.display='none';
+    document.getElementById('proBanner').classList.add('show');
+    document.getElementById('proCard').style.display='none';
+    document.getElementById('histSec').classList.add('show');
+    document.querySelectorAll('.pro-pip').forEach(p=>p.classList.add('show'));
+    document.querySelectorAll('.row-pip').forEach(p=>p.classList.add('show'));
+    renderHistory();
+    if(readingLog.length>1)computeSignature();
+  }else{
+    pill.textContent='FREE';pill.classList.remove('is-pro');
+    upBtn.style.display='block';
+  }
+}
+function activatePro(){isPro=true;localStorage.setItem('ddl_pro','1');updateProUI();closeModal();}
+function choosePlan(p){activePlan=p;document.querySelectorAll('[data-plan]').forEach(el=>el.classList.toggle('active-plan',el.dataset.plan===p));}
+function openModal(){document.getElementById('modal').classList.add('open');}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+document.getElementById('modal').addEventListener('click',e=>{if(e.target===document.getElementById('modal'))closeModal();});
+
+resetDaily();
+isPro=localStorage.getItem('ddl_pro')==='1';
+updateProUI();
+updateHint();
+computeAlignment();
+if(readingLog.length>1&&isPro)computeSignature();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js').catch(()=>{});});
+}
+</script>
+</body>
+</html>
+
+
+
+
