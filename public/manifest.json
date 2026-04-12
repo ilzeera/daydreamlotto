@@ -2,6 +2,7 @@
   "id": "/",
   "name": "DayDream Lotto — Dream Number Oracle",
   "short_name": "DayDream Lotto",
+  "start_url": "/",
   "description": "Turn your dreams into lottery numbers using AI numerology and cosmic pattern decoding.",
   "start_url": "/",
   "display": "standalone",
