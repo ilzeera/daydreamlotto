@@ -2,7 +2,7 @@
   "id": "/",
   "name": "DayDream Lotto — Dream Number Oracle",
   "short_name": "DayDream Lotto",
-  "start_url": "/",
+  "start_url": "/index.html",
   "description": "Turn your dreams into lottery numbers using AI numerology and cosmic pattern decoding.",
     "display": "standalone",
   "background_color": "#06040f",
