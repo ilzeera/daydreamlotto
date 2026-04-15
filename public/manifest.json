@@ -31,8 +31,8 @@
   ],
   "screenshots": [
     {
-      "src": "screenshots/screen1.png",
-      "sizes": "1080x1920",
+      "src": "screenshot/screenshot1.png",
+      "sizes": "445x670",
       "type": "image/png",
       "form_factor": "narrow",
       "label": "DayDream Lotto home screen"
