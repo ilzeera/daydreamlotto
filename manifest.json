@@ -1,0 +1,27 @@
+ "name": "DayDream Lotto — Dream Number Oracle",
+  "short_name": "DayDream Lotto",
+  "description": "Turn your dreams into lottery numbers using AI numerology and cosmic pattern decoding.",
+ "start_url":"/index.html", 
+  "display": "standalone",
+  "background_color": "#06040f",
+  "theme_color": "#c9a84c",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["entertainment", "lifestyle"],
+  "prefer_related_applications": false,
+      "icons": [
+    { "src": "/icons/web-app-manifest-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/web-app-manifest-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },    
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot/screenshot1.png",
+      "sizes": "445x670",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "DayDream Lotto home screen"
+    }
+  ]
+}
