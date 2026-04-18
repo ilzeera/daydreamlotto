@@ -6,6 +6,9 @@
   ],
   "routes": [
     { "src": "/api/oracle", "dest": "/api/oracle.js" },
+    { "src": "/manifest.json", "dest": "/public/manifest.json" },
+    { "src": "sw.js", "dest": "/public/sw.js" },
+    { "src": "/privacy.html", "dest": "/public/privacy.html" },
     { "src": "/(.*)", "dest": "/public/$1" }
   ]
 }
