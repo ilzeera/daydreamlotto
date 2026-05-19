@@ -24,7 +24,8 @@
       "sizes": "445x670",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "DayDream Lotto home screen"
+      "label": "DayDream Lotto home screen"},
+    {
       "src": "/screenshot/screenshot-wide.png",
       "sizes": "1280x720",
       "type": "image/png",
