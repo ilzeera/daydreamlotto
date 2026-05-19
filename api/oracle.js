@@ -27,7 +27,7 @@ export default async function handler(req, res) {
         'X-Title': 'DayDream Lotto'
       },
       body: JSON.stringify({
-        model: 'mistralai/mistral-7b-instruct:free',
+        model: 'mistralai/mistral-7b-instruct',
         messages: [{ role: 'user', content: prompt }],
         max_tokens: 1800
       })
