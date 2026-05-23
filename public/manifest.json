@@ -1,9 +1,11 @@
 {
-  "name": "DayDream Lotto — Dream Number Oracle",
+  "id": "com.daydreamlotto.app",
+  "name": "DayDream Lotto – Dream Number Oracle",
   "short_name": "DayDream Lotto",
   "description": "Turn your dreams into lottery numbers using AI numerology and cosmic pattern decoding.",
- "start_url": "/", 
+  "start_url": "/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "browser"],
   "background_color": "#06040f",
   "theme_color": "#c9a84c",
   "orientation": "portrait-primary",
@@ -11,12 +13,13 @@
   "lang": "en",
   "dir": "ltr",
   "categories": ["entertainment", "lifestyle"],
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
   "prefer_related_applications": false,
-      "icons": [
+  "icons": [
     { "src": "/icons/web-app-manifest-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "/icons/web-app-manifest-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },    
+    { "src": "/icons/web-app-manifest-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
     { "src": "/icons/web-app-manifest-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "/icons/web-app-manifest-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }    
+    { "src": "/icons/web-app-manifest-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "screenshots": [
     {
@@ -31,7 +34,7 @@
       "sizes": "1600x900",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "DayDream Lotto wide screen"      
+      "label": "DayDream Lotto wide screen"
     }
   ]
 }
