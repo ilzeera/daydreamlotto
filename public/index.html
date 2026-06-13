@@ -686,6 +686,10 @@ document.getElementById('modal').addEventListener('click',e=>{if(e.target===docu
 
 resetDaily();
 isPro=localStorage.getItem('ddl_pro')==='1';
+const _em=localStorage.getItem('ddl_email');
+if(_em&&!isPro){
+  fetch(`/api/check-sub?email=${encodeURIComponent(_em)}`)
+    .then(r=>r.json()).then(d=>{if(d.active){isPro=true;localStorage.setItem('ddl_pro','1');updateProUI();}});
 updateProUI();
 updateHint();
 computeAlignment();
