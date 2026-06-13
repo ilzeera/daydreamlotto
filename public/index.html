@@ -689,7 +689,17 @@ function closeModal(){document.getElementById('modal').classList.remove('open');
 document.getElementById('modal').addEventListener('click',e=>{if(e.target===document.getElementById('modal'))closeModal();});
 
 resetDaily();
-isPro=localStorage.getItem('ddl_pro')==='1';
+isPro=false;
+const _em=localStorage.getItem('ddl_email');
+if(_em){
+  fetch(`/api/check-sub?email=${encodeURIComponent(_em)}`)
+    .then(r=>r.json())
+    .then(d=>{
+      isPro=d.active;
+      if(!d.active)localStorage.removeItem('ddl_pro');
+      updateProUI();
+    });
+}
 const _em=localStorage.getItem('ddl_email');
 if(_em&&!isPro){
   fetch(`/api/check-sub?email=${encodeURIComponent(_em)}`)
