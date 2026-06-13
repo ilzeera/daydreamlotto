@@ -678,7 +678,7 @@ function updateProUI(){
     upBtn.style.display='block';
   }
 }
-function activatePro(){isPro=true;localStorage.setItem('ddl_pro','1');updateProUI();closeModal();}
+function activatePro(){window.open('https://paystack.shop/pay/ezinmykasj','_blank');}
 function choosePlan(p){activePlan=p;document.querySelectorAll('[data-plan]').forEach(el=>el.classList.toggle('active-plan',el.dataset.plan===p));}
 function openModal(){document.getElementById('modal').classList.add('open');}
 function closeModal(){document.getElementById('modal').classList.remove('open');}
