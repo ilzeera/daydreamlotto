@@ -367,12 +367,6 @@ h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1.4rem,6vw,2.4rem);font
         <div class="po-price">R49</div>
         <div class="po-per">per month</div>
       </div>
-      <div class="price-opt active-plan" data-plan="annual" onclick="choosePlan('annual')">
-        <div class="po-save">SAVE 40%</div>
-        <div class="po-lbl">Annual</div>
-        <div class="po-price">R499</div>
-        <div class="po-per">R41.58/mo · billed yearly</div>
-      </div>
     </div>
     <button class="upgrade-btn" onclick="event.stopPropagation();activatePro()">
     <div class="trial-note">Cancel anytime. No charge during your 7-day trial.</div>
@@ -406,21 +400,14 @@ h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1.4rem,6vw,2.4rem);font
     <div class="modal-prices">
       <div class="mpo" data-plan="monthly" onclick="choosePlan('monthly')">
         <div class="mpl">Monthly</div>
-        <div class="mpp">$4.99</div>
+        <div class="mpp">R49</div>
         <div class="mpd">per month</div>
-      </div>
-      <div class="mpo active-plan" data-plan="annual" onclick="choosePlan('annual')">
-        <div class="mpl">Annual</div>
-        <div class="mpp">$35.88</div>
-        <div class="mpd">$2.99/month</div>
-        <div class="mps">Save 40% · best value</div>
       </div>
     </div>
     <button class="modal-upgrade-btn" onclick="activatePro()">✦ Start 7-Day Free Trial ✦</button>
     <div class="trial-note">No charge for 7 days. Cancel anytime.</div>
   </div>
 </div>
-
 <script>
 (function(){
   const c=document.getElementById('canvas-bg'),ctx=c.getContext('2d');
