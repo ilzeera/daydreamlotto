@@ -16,11 +16,12 @@ export default async function handler(req, res) {
 
   if (event.event === 'subscription.create' ||
       event.event === 'charge.success') {
-    const email = event.data.customer.email;
-    // Store subscriber email in Vercel KV or just log it
-    console.log('New subscriber:', email);
-    // For now, return success
-    return res.status(200).json({ received: true, email });
+    const email = event.data.customer.email.toLowerCase();
+   
+    // Store in Upstash Redis
+    await fetch(`${process.env.KV_REST_API_URL}/set/sub:${email}/1`, {
+      headers: { Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}` }
+    });
   }
 
   res.status(200).json({ received: true });
