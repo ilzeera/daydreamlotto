@@ -687,10 +687,7 @@ if(_em){
       updateProUI();
     });
 }
-let_em=localStorage.getItem('ddl_email');
-if(_em&&!isPro){
-  fetch(`/api/check-sub?email=${encodeURIComponent(_em)}`)
-    .then(r=>r.json()).then(d=>{if(d.active){isPro=true;localStorage.setItem('ddl_pro','1');updateProUI();}});
+
 updateProUI();
 updateHint();
 computeAlignment();
